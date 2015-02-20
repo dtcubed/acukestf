@@ -1,0 +1,6 @@
+
+01) Given a "feature" file base directory, acukestf will enforce the uniqueness of all tags
+    beginning with "@TEST-CASE-".
+
+02) Both interactive and batch modes will be options within acukestf.
+
