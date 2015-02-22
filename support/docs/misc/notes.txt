@@ -4,3 +4,4 @@
 
 02) Both interactive and batch modes will be options within acukestf.
 
+03) Suite files will use JSON.
