@@ -42,7 +42,7 @@
                                     <!--
                                     <mainClass>cucumber.api.cli.Main</mainClass>
                                     -->
-                                    <mainClass>com.github.dtcubed.acukestf.Utilities</mainClass>
+                                    <mainClass>com.github.dtcubed.acukestf.MainDriver</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
