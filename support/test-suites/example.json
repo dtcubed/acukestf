@@ -1,0 +1,25 @@
+{
+  "suite":{
+    "name":"Example Test Suite",
+    "production":false,
+    "version":"1.4.5.6"
+  },
+  "cases":[
+    {
+      "name":"NUMBER-001",
+      "loopCount":1
+    },
+    {
+      "name":"NUMBER-002",
+      "loopCount":1
+    },
+    {
+      "name":"NUMBER-003",
+      "loopCount":1
+    },
+    {
+      "name":"NUMBER-004",
+      "loopCount":1
+    }
+  ]
+}
