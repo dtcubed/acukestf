@@ -22,6 +22,15 @@ public class Driver01 {
 
                 HashMap<String, Integer> tagCount = Utilities.get_feature_files_tag_count(featureFileBaseDir);
 
+                if (Utilities.test_suite_ok_to_execute(testSuiteFile, tagCount)) {
+
+                    System.out.println("Good to go");
+
+                } else {
+
+                    System.out.println("Frowny Face - Bad");
+                }
+
             } catch (Exception e) {
 
                 System.err.println(e.getStackTrace());

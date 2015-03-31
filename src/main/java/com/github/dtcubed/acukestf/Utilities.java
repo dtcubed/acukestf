@@ -13,6 +13,10 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Utilities {
 
     /*****************************************************************************************************************/
@@ -204,6 +208,106 @@ public class Utilities {
         return str2return;
     }
     /*****************************************************************************************************************/
+    public static boolean test_suite_ok_to_execute(String testSuiteFile, HashMap<String, Integer> tagCount) {
+
+        boolean localDebug = true;
+
+        int testCaseErrorCounter = 0;
+
+        if (localDebug) {
+
+            System.out.println("Processing Test Suite: [" + testSuiteFile + "]");
+        }
+
+        try {
+
+            // Read the entire file into a string using Apache Commons IO per:
+            // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
+            String fileContents = FileUtils.readFileToString(new File(testSuiteFile));
+
+            if (localDebug) {
+
+                System.out.println("START TEST SUITE FILE CONTENTS: [");
+                System.out.println(fileContents);
+                System.out.println("] END TEST SUITE FILE CONTENTS");
+            }
+
+            // Now, we are going to convert the raw file contents to a JSONObject and ensure that there
+            // is one (and only one) Gherkin "TAG" for each of the named Test Cases in the JSON file.
+            JSONObject json_object = new JSONObject(fileContents);
+
+            String suiteName        = json_object.getJSONObject("suite").getString("name");
+            boolean suiteProduction = json_object.getJSONObject("suite").getBoolean("production");
+            String suiteVersion     = json_object.getJSONObject("suite").getString("version");
+
+            if (localDebug) {
+
+                System.out.println("Suite Name           : [" + suiteName + "]");
+                System.out.println("Suite Production Flag: [" + Boolean.toString(suiteProduction) + "]");
+                System.out.println("Suite Version        : [" + suiteVersion + "]");
+
+            }
+
+            // Now, handle the Test Cases. Loop through them in the order presented in the JSON file.
+            JSONArray testCase = json_object.getJSONArray("cases");
+
+            for(int testCaseIndex = 0; testCaseIndex < testCase.length(); testCaseIndex++) {
+
+                String testCaseName        = testCase.getJSONObject(testCaseIndex).getString("name");
+                // The input HashMap still has the "at sign" in its keys
+                String testCaseNameWithTag = "@" + testCaseName;
+                int testCaseLoopCount      = testCase.getJSONObject(testCaseIndex).getInt("loopCount");
+
+                if (localDebug) {
+
+                    System.out.println("Test Case Name      : [" + testCaseName + "]");
+                    System.out.println("Test Case Loop Count: [" + Integer.toString(testCaseLoopCount) + "]");
+
+                }
+
+                // See if a Gherkin Feature Tag Exists For This Test Case
+                if (tagCount.containsKey(testCaseNameWithTag)) {
+
+                    int occurrenceCount = tagCount.get(testCaseNameWithTag);
+
+                    // For a Test Case, we are insisting that a unique TAG be used to specify it.
+                    if (occurrenceCount != 1) {
+
+                        String errorMessage = String.format("Found: [%d] Gherkin TAGs For: [%s]", occurrenceCount, testCaseName);
+                        System.err.println(errorMessage);
+                        testCaseErrorCounter += 1;
+
+                    }
+
+                } else {
+
+                    String errorMessage = String.format("No Gherkin TAG Found For: [%s]", testCaseName);
+                    System.err.println(errorMessage);
+                    testCaseErrorCounter += 1;
+
+                }
+            }
+
+            if (testCaseErrorCounter == 0) {
+
+                return true;
+
+            } else {
+
+                return false;
+
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            String errorMessage = String.format("Problem processing: [%s]", testSuiteFile);
+            System.err.println(errorMessage);
+        }
+
+        return false;
+    }
+    /*****************************************************************************************************************/
     public static void main(String [ ] args)
     {
         String rs = get_random_string();
@@ -211,4 +315,5 @@ public class Utilities {
         System.out.println(rs);
 
     }
+    /*****************************************************************************************************************/
 }
