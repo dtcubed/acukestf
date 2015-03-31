@@ -18,14 +18,15 @@ public class Driver01 {
             message = String.format("Test Suite File: [%s] Feature File Base Dir: [%s]", testSuiteFile, featureFileBaseDir);
             System.out.println(message);
 
-            HashMap<String, Integer> tagCount = Utilities.get_feature_files_tag_count(featureFileBaseDir);
+            try {
 
-            int a = tagCount.get("TEST-CASE-001");
-            int b = tagCount.get("TEST-CASE-002");
+                HashMap<String, Integer> tagCount = Utilities.get_feature_files_tag_count(featureFileBaseDir);
 
-            System.out.println(a);
-            System.out.println(b);
+            } catch (Exception e) {
 
+                System.err.println(e.getStackTrace());
+
+            }
 
         } else {
 

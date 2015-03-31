@@ -1,135 +1,24 @@
 package com.github.dtcubed.acukestf;
 
-
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+
 import java.text.SimpleDateFormat;
 
-//import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.List;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-//import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-
 
 public class Utilities {
 
-
-    /*****************************************************************************************************************/
-    public static void get_feature_file_tags_ORIG(String featureFile)
-    {
-        boolean localDebug = true;
-
-        if (localDebug) {
-
-            System.out.println("Processing: [" + featureFile + "]");
-        }
-
-
-
-        // Use SPLIT
-
-        //String regexpTag   = "^.*\\(@\\S+\\)\\s+.*$";
-
-        // String regexpTag   = ".*(TEST-CASE-00\\d+).*";
-
-        // Pattern patternTag = Pattern.compile(regexpTag, Pattern.DOTALL);
-
-
-        String regexpTag   = "^@\\(\\S+\\)\\$";
-
-        // String regexpTag   = ".*(TEST-CASE-00\\d+).*";
-
-        Pattern patternTag = Pattern.compile(regexpTag);
-
-        try {
-
-            // Read the entire file into a string using Apache Commons IO per:
-            // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
-            String fileContents = FileUtils.readFileToString(new File(featureFile));
-
-            if (localDebug) {
-
-                System.out.println("START: [");
-
-                System.out.println(fileContents);
-
-                System.out.println("] ************************************ END");
-
-            }
-
-            // String [] line = fileContents.split("@");
-
-            String [] line = fileContents.split("\\s+");
-
-            System.out.println("============================= START ===========================");
-            for(int i = 0; i < line.length; i++) {
-
-                String myLine = line[i];
-
-                System.out.println("LINE: [" + myLine + "]");
-
-                if (myLine.matches("^@.*")) {
-
-                    System.out.println("STRING MATCHES: [" + myLine + "]");
-
-                }
-
-                Matcher matcherTag = patternTag.matcher(myLine);
-
-                if (matcherTag.find()) {
-
-                    String tag = matcherTag.group(1);
-
-                    System.out.println("MATCHING TAG MATCHER: [" + tag + "]");
-
-                }
-
-            }
-            System.out.println("============================= END ===========================");
-
-
-               /*
-             System.out.println("Line 0");
-
-             System.out.println(line[0]);
-
-             System.out.println("Line 1");
-
-             System.out.println(line[1]);
-
-             Matcher matcherTag = patternTag.matcher(fileContents);
-
-             while (matcherTag.find()) {
-
-                 //String tag = matcherTag.group(1);
-
-                 String tag = matcherTag.group(1);
-
-                 System.out.println("MATCHING TAG: [" + tag + "]");
-             }
-             */
-
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-
-    }
     /*****************************************************************************************************************/
     public static HashMap<String, Integer> get_feature_file_tags(String featureFile) throws Exception
     {
-        boolean localDebug = true;
+        boolean localDebug = false;
 
         // Good link for Java HashMap: http://www.dotnetperls.com/hashmap
         HashMap<String, Integer> tagCount = new HashMap<String, Integer>();
@@ -227,17 +116,18 @@ public class Utilities {
 
     }
     /*****************************************************************************************************************/
-    public static HashMap<String, Integer> get_feature_files_tag_count(String featureFileBaseDir)
+    public static HashMap<String, Integer> get_feature_files_tag_count(String featureFileBaseDir) throws Exception
     {
         boolean localDebug = true;
 
         // Good link for Java HashMap: http://www.dotnetperls.com/hashmap
         HashMap<String, Integer> tagCount = new HashMap<String, Integer>();
 
+        HashMap<String, Integer> tempHashMap;
+
         // Get list of Feature Files
         // Foreach Feature File, return a HashMap consisting of each Gerkin "tag" used and a usage count
         // Merge the individual file HashMap with the "master" HashMap declared above.
-
         try {
 
             List<File> file_list = get_feature_files(featureFileBaseDir);
@@ -246,21 +136,55 @@ public class Utilities {
 
                 if (localDebug) {
 
-                    // System.out.println("Canonical Path: " + feature_file.getCanonicalPath());
+                    System.out.println("Canonical Path: " + feature_file.getCanonicalPath());
                     System.out.println("Relative Path : " + feature_file.getPath());
                 }
-                get_feature_file_tags(feature_file.getPath());
+
+                tempHashMap = get_feature_file_tags(feature_file.getPath());
+
+                // Get keys of the tempHashMap.
+                Set<String> keys = tempHashMap.keySet();
+
+                // Now, loop over keys.
+                for (String key : keys) {
+
+                    // See if "tagCount" already contains the key in question.
+                    if (tagCount.containsKey(key)) {
+
+                        int totalCount = tempHashMap.get(key) + tagCount.get(key);
+
+                        // Now, store total back into "tagCount".
+                        tagCount.put(key, totalCount);
+
+                        if (localDebug) {
+
+                            String msg = String.format("TAG COUNT KEY: [%s] VALUE: [%d]", key, totalCount);
+                            System.out.println(msg);
+                        }
+
+                    } else {
+
+                        // Since the key didn't previously exist in "tagCount", store the new key and value.
+                        tagCount.put(key, tempHashMap.get(key));
+
+                        if (localDebug) {
+
+                            String msg = String.format("TAG COUNT KEY: [%s] VALUE: [%d]", key, tempHashMap.get(key));
+                            System.out.println(msg);
+                        }
+
+                    }
+
+                }
 
             }
 
         } catch (Exception e) {
 
-            System.err.println(e.getMessage());
+            e.printStackTrace();
+            String errorMessage = String.format("Problem processing: [%s]", featureFileBaseDir);
+            throw new Exception(errorMessage);
         }
-
-
-        tagCount.put("TEST-CASE-001", 1);
-        tagCount.put("TEST-CASE-002", 2);
 
         return(tagCount);
 
