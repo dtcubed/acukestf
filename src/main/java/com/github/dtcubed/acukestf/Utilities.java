@@ -25,69 +25,77 @@ public class Utilities {
 
 
     /*****************************************************************************************************************/
-     public static void get_feature_file_tags(String featureFile)
-     {
-         boolean localDebug = true;
+    public static void get_feature_file_tags_ORIG(String featureFile)
+    {
+        boolean localDebug = true;
 
-         if (localDebug) {
+        if (localDebug) {
 
-             System.out.println("Processing: [" + featureFile + "]");
-         }
-
-
-
-         // Use SPLIT
-
-         //String regexpTag   = "^.*\\(@\\S+\\)\\s+.*$";
-
-         // String regexpTag   = ".*(TEST-CASE-00\\d+).*";
-
-         // Pattern patternTag = Pattern.compile(regexpTag, Pattern.DOTALL);
+            System.out.println("Processing: [" + featureFile + "]");
+        }
 
 
-         String regexpTag   = "^@\\(\\S+\\)\\$";
 
-         // String regexpTag   = ".*(TEST-CASE-00\\d+).*";
+        // Use SPLIT
 
-         Pattern patternTag = Pattern.compile(regexpTag);
+        //String regexpTag   = "^.*\\(@\\S+\\)\\s+.*$";
 
-         try {
+        // String regexpTag   = ".*(TEST-CASE-00\\d+).*";
 
-             // Read the entire file into a string using Apache Commons IO per:
-             // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
-             String fileContents = FileUtils.readFileToString(new File(featureFile));
+        // Pattern patternTag = Pattern.compile(regexpTag, Pattern.DOTALL);
 
-             if (localDebug) {
 
-                 System.out.println("START: [");
+        String regexpTag   = "^@\\(\\S+\\)\\$";
 
-                 System.out.println(fileContents);
+        // String regexpTag   = ".*(TEST-CASE-00\\d+).*";
 
-                 System.out.println("] ************************************ END");
+        Pattern patternTag = Pattern.compile(regexpTag);
 
-             }
+        try {
 
-             // String [] line = fileContents.split("@");
+            // Read the entire file into a string using Apache Commons IO per:
+            // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
+            String fileContents = FileUtils.readFileToString(new File(featureFile));
 
-             String [] line = fileContents.split("\\s+");
+            if (localDebug) {
 
-             System.out.println("============================= START ===========================");
-             for(int i = 0; i < line.length; i++) {
+                System.out.println("START: [");
 
-                 System.out.println("LINE:" + line[i]);
+                System.out.println(fileContents);
 
-                 Matcher matcherTag = patternTag.matcher(line[i]);
+                System.out.println("] ************************************ END");
 
-                 if (matcherTag.find()) {
+            }
 
-                     String tag = matcherTag.group(1);
+            // String [] line = fileContents.split("@");
 
-                     System.out.println("MATCHING TAG: [" + tag + "]");
+            String [] line = fileContents.split("\\s+");
 
-                 }
+            System.out.println("============================= START ===========================");
+            for(int i = 0; i < line.length; i++) {
 
-             }
-             System.out.println("============================= END ===========================");
+                String myLine = line[i];
+
+                System.out.println("LINE: [" + myLine + "]");
+
+                if (myLine.matches("^@.*")) {
+
+                    System.out.println("STRING MATCHES: [" + myLine + "]");
+
+                }
+
+                Matcher matcherTag = patternTag.matcher(myLine);
+
+                if (matcherTag.find()) {
+
+                    String tag = matcherTag.group(1);
+
+                    System.out.println("MATCHING TAG MATCHER: [" + tag + "]");
+
+                }
+
+            }
+            System.out.println("============================= END ===========================");
 
 
                /*
@@ -112,12 +120,84 @@ public class Utilities {
              */
 
 
-         } catch (IOException e) {
+        } catch (IOException e) {
 
-             e.printStackTrace();
-         }
+            e.printStackTrace();
+        }
 
-     }
+    }
+    /*****************************************************************************************************************/
+    public static HashMap<String, Integer> get_feature_file_tags(String featureFile) throws Exception
+    {
+        boolean localDebug = true;
+
+        // Good link for Java HashMap: http://www.dotnetperls.com/hashmap
+        HashMap<String, Integer> tagCount = new HashMap<String, Integer>();
+
+        if (localDebug) {
+
+            System.out.println("Processing: [" + featureFile + "]");
+        }
+
+        try {
+
+            // Read the entire file into a string using Apache Commons IO per:
+            // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
+            String fileContents = FileUtils.readFileToString(new File(featureFile));
+
+            if (localDebug) {
+
+                System.out.println("START FEATURE FILE CONTENTS: [");
+                System.out.println(fileContents);
+                System.out.println("] END FEATURE FILE CONTENTS");
+            }
+
+            // Split the Feature Into A Bunch Of Lines of "tokens", eliminating all "whitespace".
+            String [] line = fileContents.split("\\s+");
+
+            for(int lineNumber = 0; lineNumber < line.length; lineNumber++) {
+
+                String myToken = line[lineNumber];
+
+                if (localDebug) {
+
+                    String message = String.format("LINE[%05d]:[%s]", lineNumber, myToken);
+                    System.out.println(message);
+                }
+
+                if (myToken.matches("^@.*")) {
+
+                    if (tagCount.containsKey(myToken)) {
+
+                        // Since the Hash key already exists, store the incremented count.
+                        tagCount.put(myToken, (tagCount.get(myToken) + 1));
+
+                    } else {
+
+                        // Since this is the first time we've seen this tag, store the count of 1.
+                        tagCount.put(myToken, 1);
+                    }
+
+                    if (localDebug) {
+
+                        String message = String.format("MATCH TOKEN:[%s] COUNT:[%d]", myToken, tagCount.get(myToken));
+                        System.out.println(message);
+
+                    }
+
+                }
+            }
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+            String errorMessage = String.format("Problem processing: [%s]", featureFile);
+            throw new Exception(errorMessage);
+        }
+
+        return tagCount;
+
+    }
     /*****************************************************************************************************************/
     public static List<File> get_feature_files(String featureFileBaseDir) throws IOException {
 
@@ -147,12 +227,11 @@ public class Utilities {
 
     }
     /*****************************************************************************************************************/
-    // good link for Java HashMap:
-    // http://www.dotnetperls.com/hashmap
     public static HashMap<String, Integer> get_feature_files_tag_count(String featureFileBaseDir)
     {
         boolean localDebug = true;
 
+        // Good link for Java HashMap: http://www.dotnetperls.com/hashmap
         HashMap<String, Integer> tagCount = new HashMap<String, Integer>();
 
         // Get list of Feature Files
