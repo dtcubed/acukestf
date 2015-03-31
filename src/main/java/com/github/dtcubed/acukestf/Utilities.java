@@ -122,7 +122,7 @@ public class Utilities {
     /*****************************************************************************************************************/
     public static HashMap<String, Integer> get_feature_files_tag_count(String featureFileBaseDir) throws Exception
     {
-        boolean localDebug = true;
+        boolean localDebug = false;
 
         // Good link for Java HashMap: http://www.dotnetperls.com/hashmap
         HashMap<String, Integer> tagCount = new HashMap<String, Integer>();
