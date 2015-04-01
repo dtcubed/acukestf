@@ -2,6 +2,8 @@ package com.github.dtcubed.acukestf;
 
 import java.util.HashMap;
 
+import cucumber.api.cli.Main;
+
 public class Driver01 {
 
     public static void main(String[] args) {
@@ -42,6 +44,23 @@ public class Driver01 {
             String errMsg = "Expecting arguments <testSuiteFile> <featureFileBaseDir>";
             System.err.println(errMsg);
             System.exit(1);
+        }
+
+        // Experiment calling the Cucumber CLI API
+        String cukeArgv[] = {
+                "--glue", "classpath:com.github.dtcubed.acukestf",
+                "--plugin", "json",
+                "--tags", "@TEST-CASE-007",
+                "--monochrome",
+                "support/features/area1/example3.feature"};
+
+        try {
+
+            Main.main(cukeArgv);
+
+        } catch (Throwable e) {
+
+            System.err.println(e.getStackTrace());
         }
 
     }
