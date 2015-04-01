@@ -24,7 +24,7 @@ public class ACukesTFPropertiesSingleton {
         InputStream input = null;
 
         // String testPropertiesFile = System.getenv("PN_TEST_PROPERTIES");
-        // TODO: take out the hard-code.
+        // TODO: take out the hard-code maybe?.
         String acukestfPropertiesFile = "support/properties/acukestf.properties";
 
         if (localDebug) {

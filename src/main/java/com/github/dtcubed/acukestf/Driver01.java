@@ -2,8 +2,6 @@ package com.github.dtcubed.acukestf;
 
 import java.util.HashMap;
 
-import cucumber.api.cli.Main;
-
 public class Driver01 {
 
     public static void main(String[] args) {
@@ -46,34 +44,17 @@ public class Driver01 {
             System.exit(1);
         }
 
-
-        ACukesTFPropertiesSingleton acukestfps = ACukesTFPropertiesSingleton.getInstance();
-
-        String glueSwitchValue = acukestfps.getPropertyValue("CUCUMBER_CLI_API_GLUE_SWITCH_VALUE");
-
-        System.out.println("====================== START - glue switch value");
-        System.out.println(glueSwitchValue);
-        System.out.println("====================== END - glue switch value");
-
-
-        // Experiment calling the Cucumber CLI API
-        String cukeArgv[] = {
-                "--glue", "classpath:com.github.dtcubed.acukestf",
-                "--plugin", "json",
-                "--tags", "@TEST-CASE-007",
-                "--monochrome",
-                "support/features/area1/example3.feature"};
-
+        // Drive Cucumber CLI API Wrapper
         try {
 
-            Main.main(cukeArgv);
+            CucumberCliApiWrapper.doit("@TEST-CASE-007", "support/features");
+
 
         } catch (Throwable e) {
 
             System.err.println(e.getStackTrace());
         }
 
-
-
     }
 }
+
