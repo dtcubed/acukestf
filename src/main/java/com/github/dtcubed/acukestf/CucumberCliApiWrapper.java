@@ -5,10 +5,10 @@ import cucumber.api.cli.Main;
 public class CucumberCliApiWrapper {
 
     /*****************************************************************************************************************/
-    public static void doit(String tagsValue, String featureDirectory) throws Throwable {
+    public static byte doit(String tagsValue, String featureDirectory) throws Throwable {
 
 
-        boolean localDebug = true;
+        boolean localDebug = false;
 
         ACukesTFPropertiesSingleton acukestfps = ACukesTFPropertiesSingleton.getInstance();
 
@@ -47,7 +47,14 @@ public class CucumberCliApiWrapper {
                 "--monochrome",
                 featureDirectory};
 
-        Main.main(cukeArgv);
+
+        //Main.main(cukeArgv);
+        // Use the Main.run() method since it doesn't exit.
+        // I got the second argument from the de-compiled Class file, Main.class.
+
+        byte exitstatus = Main.run(cukeArgv, Thread.currentThread().getContextClassLoader());
+
+        return exitstatus;
 
     }
     /*****************************************************************************************************************/

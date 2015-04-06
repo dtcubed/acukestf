@@ -23,7 +23,9 @@ public class Utilities {
     public static boolean execute_test_cases(String testSuiteFile, String featureFileBaseDir) throws Throwable
     {
 
-        boolean localDebug = true;
+        boolean localDebug = false;
+
+        byte testCaseReturnCode;
 
         if (localDebug) {
 
@@ -76,7 +78,13 @@ public class Utilities {
 
                 }
 
-                CucumberCliApiWrapper.doit(testCaseNameWithTag, featureFileBaseDir);
+                testCaseReturnCode = CucumberCliApiWrapper.doit(testCaseNameWithTag, featureFileBaseDir);
+
+                if (localDebug) {
+
+                    System.out.println("TEST CASE EXIT STATUS: [" + Byte.toString(testCaseReturnCode) + "]");
+
+                }
 
             }
 
@@ -281,7 +289,7 @@ public class Utilities {
     /*****************************************************************************************************************/
     public static boolean test_suite_ok_to_execute(String testSuiteFile, HashMap<String, Integer> tagCount) {
 
-        boolean localDebug = true;
+        boolean localDebug = false;
 
         int testCaseErrorCounter = 0;
 

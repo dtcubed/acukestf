@@ -8,8 +8,6 @@ public class Driver01 {
 
         String message;
 
-        System.out.println("Driver01() - hello world");
-
         if (args.length == 2) {
 
             String testSuiteFile      = args[0];
@@ -43,19 +41,6 @@ public class Driver01 {
             System.err.println(errMsg);
             System.exit(1);
         }
-
-        // Drive Cucumber CLI API Wrapper
-        /*
-        try {
-
-            CucumberCliApiWrapper.doit("@TEST-CASE-007", "support/features");
-
-
-        } catch (Throwable e) {
-
-            System.err.println(e.getStackTrace());
-        }
-        */
 
     }
 }
