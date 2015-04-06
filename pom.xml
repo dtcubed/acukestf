@@ -8,6 +8,10 @@
     <artifactId>acukestf</artifactId>
     <version>1.1-SNAPSHOT</version>
 
+    <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <!-- START Use shade plugin and skip signature stuff in Uber Jar -->
     <build>
         <plugins>

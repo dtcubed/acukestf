@@ -4,7 +4,7 @@ ECHO "Execute Example Test Suite"
 ECHO "================================================"
 ECHO ON
 
-java -jar target\acukestf-1.1-SNAPSHOT.jar support/test-suites/example.json support/features
+java -jar target/acukestf-1.1-SNAPSHOT.jar support/test-suites/example.json support/features
 
 GOTO AROUND
 ECHO "not gonna see this"
