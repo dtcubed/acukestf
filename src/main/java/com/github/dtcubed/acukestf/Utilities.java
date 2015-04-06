@@ -20,6 +20,77 @@ import org.json.JSONObject;
 public class Utilities {
 
     /*****************************************************************************************************************/
+    public static boolean execute_test_cases(String testSuiteFile, String featureFileBaseDir) throws Throwable
+    {
+
+        boolean localDebug = true;
+
+        if (localDebug) {
+
+            System.out.println("Processing Test Suite: [" + testSuiteFile + "]");
+        }
+
+        try {
+
+            // Read the entire file into a string using Apache Commons IO per:
+            // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
+            String fileContents = FileUtils.readFileToString(new File(testSuiteFile));
+
+            if (localDebug) {
+
+                System.out.println("START TEST SUITE FILE CONTENTS: [");
+                System.out.println(fileContents);
+                System.out.println("] END TEST SUITE FILE CONTENTS");
+            }
+
+            // Now, we are going to convert the raw file contents to a JSONObject and ensure that there
+            // is one (and only one) Gherkin "TAG" for each of the named Test Cases in the JSON file.
+            JSONObject json_object = new JSONObject(fileContents);
+
+            String suiteName        = json_object.getJSONObject("suite").getString("name");
+            boolean suiteProduction = json_object.getJSONObject("suite").getBoolean("production");
+            String suiteVersion     = json_object.getJSONObject("suite").getString("version");
+
+            if (localDebug) {
+
+                System.out.println("Suite Name           : [" + suiteName + "]");
+                System.out.println("Suite Production Flag: [" + Boolean.toString(suiteProduction) + "]");
+                System.out.println("Suite Version        : [" + suiteVersion + "]");
+
+            }
+
+            // Now, handle the Test Cases. Loop through them in the order presented in the JSON file.
+            JSONArray testCase = json_object.getJSONArray("cases");
+
+            for(int testCaseIndex = 0; testCaseIndex < testCase.length(); testCaseIndex++) {
+
+                String testCaseName        = testCase.getJSONObject(testCaseIndex).getString("name");
+                // The input HashMap still has the "at sign" in its keys
+                String testCaseNameWithTag = "@" + testCaseName;
+                int testCaseCount      = testCase.getJSONObject(testCaseIndex).getInt("count");
+
+                if (localDebug) {
+
+                    System.out.println("Test Case Name : [" + testCaseName + "]");
+                    System.out.println("Test Case Count: [" + Integer.toString(testCaseCount) + "]");
+
+                }
+
+                CucumberCliApiWrapper.doit(testCaseNameWithTag, featureFileBaseDir);
+
+            }
+
+        } catch (Throwable e) {
+
+            e.printStackTrace();
+            String errorMessage = String.format("Problem processing: [%s]", testSuiteFile);
+            System.err.println(errorMessage);
+        }
+
+        return true;
+
+    }
+    /*****************************************************************************************************************/
     public static HashMap<String, Integer> get_feature_file_tags(String featureFile) throws Exception
     {
         boolean localDebug = false;
@@ -256,12 +327,12 @@ public class Utilities {
                 String testCaseName        = testCase.getJSONObject(testCaseIndex).getString("name");
                 // The input HashMap still has the "at sign" in its keys
                 String testCaseNameWithTag = "@" + testCaseName;
-                int testCaseLoopCount      = testCase.getJSONObject(testCaseIndex).getInt("loopCount");
+                int testCaseCount          = testCase.getJSONObject(testCaseIndex).getInt("count");
 
                 if (localDebug) {
 
                     System.out.println("Test Case Name      : [" + testCaseName + "]");
-                    System.out.println("Test Case Loop Count: [" + Integer.toString(testCaseLoopCount) + "]");
+                    System.out.println("Test Case Loop Count: [" + Integer.toString(testCaseCount) + "]");
 
                 }
 

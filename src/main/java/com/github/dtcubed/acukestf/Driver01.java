@@ -24,14 +24,14 @@ public class Driver01 {
 
                 if (Utilities.test_suite_ok_to_execute(testSuiteFile, tagCount)) {
 
-                    System.out.println("Good to go");
+                    Utilities.execute_test_cases(testSuiteFile, featureFileBaseDir);
 
                 } else {
 
-                    System.out.println("Frowny Face - Bad");
+                    System.out.println("Suite is NOT OK to execute!");
                 }
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
 
                 System.err.println(e.getStackTrace());
 
@@ -45,6 +45,7 @@ public class Driver01 {
         }
 
         // Drive Cucumber CLI API Wrapper
+        /*
         try {
 
             CucumberCliApiWrapper.doit("@TEST-CASE-007", "support/features");
@@ -54,6 +55,7 @@ public class Driver01 {
 
             System.err.println(e.getStackTrace());
         }
+        */
 
     }
 }
