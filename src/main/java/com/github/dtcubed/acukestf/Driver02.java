@@ -24,15 +24,13 @@ public class Driver02 {
 
             System.out.println(message);
 
-            System.exit(1);
-
             try {
 
                 HashMap<String, Integer> tagCount = Utilities.get_feature_files_tag_count(featureFileBaseDir);
 
                 if (Utilities.test_suite_ok_to_execute(testSuiteFile, tagCount)) {
 
-                    Utilities.execute_test_cases(testSuiteFile, featureFileBaseDir);
+                    Utilities.build_run_feature_file(testSuiteFile, featureFileBaseDir, runDirectory);
 
                 } else {
 

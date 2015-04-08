@@ -20,6 +20,55 @@ import org.json.JSONObject;
 public class Utilities {
 
     /*****************************************************************************************************************/
+    public static boolean build_run_feature_file(String testSuiteFile, String featureFileBaseDir, String runDirectory)
+        throws Throwable
+    {
+        boolean localDebug = true;
+
+        String cummulativeFFcontents = "";
+
+        String runFeatureFile = runDirectory + "run.feature";
+
+        try {
+
+            // Get a list of a Feature Files
+            List<File> file_list = get_feature_files(featureFileBaseDir);
+
+            // Add the contents of each Feature to one cummulative String variable.
+            for (File feature_file : file_list) {
+
+                if (localDebug) {
+
+                    System.out.println("Canonical Path: " + feature_file.getCanonicalPath());
+                    System.out.println("Relative Path : " + feature_file.getPath());
+                }
+
+                // Read the entire file into a string using Apache Commons IO per:
+                // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
+                cummulativeFFcontents += FileUtils.readFileToString(new File(feature_file.getPath()));
+                // Add two (2) MSFT "newline" representations to ensure separation between the last
+                // Scenario in one file from the Feature line in the next.
+                cummulativeFFcontents += "\r\n\r\n";
+
+            }
+
+            if (localDebug) {
+
+                System.out.println("START CUMMULATIVE FF CONTENTS: [");
+                System.out.println(cummulativeFFcontents);
+                System.out.println("] END CUMMULATIVE FF CONTENTS");
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            String errorMessage = String.format("Problem processing: [%s]", featureFileBaseDir);
+            throw new Exception(errorMessage);
+        }
+
+        return true;
+    }
+    /*****************************************************************************************************************/
     public static boolean execute_test_cases(String testSuiteFile, String featureFileBaseDir) throws Throwable
     {
 
