@@ -99,6 +99,17 @@ public class Utilities {
 
     }
     /*****************************************************************************************************************/
+    public static String get_datetime_string()
+    {
+        Date date  = new Date();
+        // Using the date/time out to the millisecond.
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss-SSS");
+
+        String str2return = dateFormat.format(date);
+
+        return str2return;
+    }
+    /*****************************************************************************************************************/
     public static HashMap<String, Integer> get_feature_file_tags(String featureFile) throws Exception
     {
         boolean localDebug = false;
@@ -277,7 +288,7 @@ public class Utilities {
     {
         Date date  = new Date();
         Random rng = new Random();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss-SSS-");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss-SSS");
 
         // Concatenate the formatted data/time (out to the millisecond) with a
         // pseudo-random number. This forms a "random enough" string.

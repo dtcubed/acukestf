@@ -40,6 +40,10 @@ public class CucumberCliApiWrapper {
                 "support/features"};
         */
 
+        /* TODO: more work in this area.
+           For both the json and junit plugin, there seems to be the option to use an argument like this:
+           junit:run/runid/output.xml       or     json:run/runid/output.json
+         */
         String cukeArgv[] = {
                 "--glue", glueSwitchValue,
                 "--plugin", "json",
