@@ -5,11 +5,18 @@ import java.io.IOException;
 
 import java.text.SimpleDateFormat;
 
+/*
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+*/
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+
 
 import org.apache.commons.io.FileUtils;
 
@@ -46,9 +53,11 @@ public class Utilities {
                 // Read the entire file into a string using Apache Commons IO per:
                 // http://abhinandanmk.blogspot.com/2012/05/java-how-to-read-complete-text-file.html
                 cummulativeFFcontents += FileUtils.readFileToString(new File(feature_file.getPath()));
-                // Add two (2) MSFT "newline" representations to ensure separation between the last
-                // Scenario in one file from the Feature line in the next.
-                cummulativeFFcontents += "\r\n\r\n";
+                // Add two (2) MSFT "newline" representations (with a leading whitespace) to ensure
+                // separation between the last Scenario in one file from the Feature line in the next.
+                // The leading whitespace also is there to ensure that we can isolate the last Scenario
+                // in the last Feature file processed.
+                cummulativeFFcontents += " \r\n \r\n";
 
             }
 
@@ -57,6 +66,15 @@ public class Utilities {
                 System.out.println("START CUMMULATIVE FF CONTENTS: [");
                 System.out.println(cummulativeFFcontents);
                 System.out.println("] END CUMMULATIVE FF CONTENTS");
+            }
+
+            String scenario = extract_scenario(cummulativeFFcontents, "@TEST-CASE-006");
+
+            if (localDebug) {
+
+                System.out.println("START EXTRACTED SCENARIO: [");
+                System.out.println(scenario);
+                System.out.println("] END EXTRACTED SCENARIO");
             }
 
         } catch (Exception e) {
@@ -146,6 +164,70 @@ public class Utilities {
 
         return true;
 
+    }
+    /*****************************************************************************************************************/
+    public static String extract_scenario(String cummulativeFFcontents, String gerkinTag) {
+
+        boolean localDebug = true;
+
+        boolean scenarioStartFound = false;
+        boolean scenarioEndFound = false;
+
+        int scenarioStartLine = 0;
+        int scenarioEndLine   = 0;
+
+
+        // Split the Cummulative Feature File contents into a bunch of lines using the MSFT
+        // "newline" convention. If this ends up running on a UNIX system,
+        // TODO: revisit EOL code.
+        String [] line = cummulativeFFcontents.split("\r\n");
+
+        for(int lineNumber = 0; lineNumber < line.length; lineNumber++) {
+
+            String myLine = line[lineNumber];
+
+            if (localDebug) {
+
+                String message = String.format("LINE[%06d]:[%s]", lineNumber, myLine);
+                System.out.println(message);
+            }
+
+            if (!(scenarioStartFound)) {
+
+                if (myLine.matches("^.*" + gerkinTag + ".*$")) {
+
+                    if (localDebug) {
+
+                        String message = String.format("SCENARIO START FOUND - LINE[%06d]", lineNumber);
+                        System.out.println(message);
+                    }
+
+                    scenarioStartFound = true;
+                    scenarioStartLine = lineNumber;
+                }
+
+            } else {
+
+                // Zero or more whitespace.
+                if (myLine.matches("^\\s*$")) {
+
+                    if (localDebug) {
+
+                        String message = String.format("SCENARIO END FOUND - LINE[%06d]", lineNumber);
+                        System.out.println(message);
+                    }
+
+                    scenarioEndFound = true;
+                    scenarioEndLine = lineNumber;
+
+                    break;
+                }
+            }
+
+        }
+
+
+        return "not implemented";
     }
     /*****************************************************************************************************************/
     public static String get_datetime_string()
