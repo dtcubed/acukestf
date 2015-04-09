@@ -30,7 +30,7 @@ public class Utilities {
         // NOTE: in the code below, an example from "Mkyong.com" is useful:
         // http://www.mkyong.com/java/how-to-write-to-file-in-java-bufferedwriter-example/
 
-        boolean localDebug = true;
+        boolean localDebug = false;
 
         String cummulativeFFcontents = "";
 
@@ -101,17 +101,25 @@ public class Utilities {
 
             JSONObject json_object = new JSONObject(fileContents);
 
-            String suiteName        = json_object.getJSONObject("suite").getString("name");
-            boolean suiteProduction = json_object.getJSONObject("suite").getBoolean("production");
-            String suiteVersion     = json_object.getJSONObject("suite").getString("version");
+            String suiteName           = json_object.getJSONObject("suite").getString("name");
+            boolean suiteProduction    = json_object.getJSONObject("suite").getBoolean("production");
+            boolean suiteStopOnFailure = json_object.getJSONObject("suite").getBoolean("stop_on_failure");
+            String suiteVersion        = json_object.getJSONObject("suite").getString("version");
 
             if (localDebug) {
 
                 System.out.println("Suite Name           : [" + suiteName + "]");
                 System.out.println("Suite Production Flag: [" + Boolean.toString(suiteProduction) + "]");
+                System.out.println("Suite Stop On Failure: [" + Boolean.toString(suiteStopOnFailure) + "]");
                 System.out.println("Suite Version        : [" + suiteVersion + "]");
 
             }
+
+            // Write Feature: line out into the Run Feature File
+            bw.write("Feature: ");
+            bw.write(suiteName);
+            bw.write("\r\n");
+            bw.write("\r\n");
 
             // Now, handle the Test Cases. Loop through them in the order presented in the JSON file.
             JSONArray testCase = json_object.getJSONArray("cases");
@@ -123,17 +131,19 @@ public class Utilities {
                 String testCaseNameWithTag = "@" + testCaseName;
                 int testCaseCount      = testCase.getJSONObject(testCaseIndex).getInt("count");
 
-
                 String [] scenario = extract_scenario(cummulativeFFcontents, testCaseNameWithTag);
-
 
                 for(int lineNumber = 0; lineNumber < scenario.length; lineNumber++) {
 
                     String myLine = scenario[lineNumber];
                     // Write into the Run Feature File
                     bw.write(myLine);
+                    // Write MSFT "newline";
+                    bw.write("\r\n");
                     //System.out.println(myLine);
                 }
+                // Write an additional MSFT "newline" after each Scenario.
+                bw.write("\r\n");
 
             }
             bw.close();
@@ -230,7 +240,7 @@ public class Utilities {
     /*****************************************************************************************************************/
     public static String[] extract_scenario(String cummulativeFFcontents, String gerkinTag) {
 
-        boolean localDebug = true;
+        boolean localDebug = false;
 
         boolean scenarioStartFound = false;
         boolean scenarioEndFound = false;
@@ -248,25 +258,30 @@ public class Utilities {
 
             String myLine = line[lineNumber];
 
-            if (localDebug && false) {
+            if (localDebug) {
 
                 String message = String.format("LINE[%06d]:[%s]", lineNumber, myLine);
                 System.out.println(message);
             }
 
+            // TODO: The matching for Scenario Start will definitely have to be re-visited.
+            // TODO: We may have to put in logic to scoop up any non-empy lines _before_ the tag that matched.
             if (!(scenarioStartFound)) {
 
-                if (myLine.matches("^.*" + gerkinTag + ".*$")) {
+                // The regexp below implies that the Start Of Scenario matching Gherkin tag should be
+                // on a line of its own before the Scenario to execute.
+                if (myLine.matches("^\\s*" + gerkinTag + "\\s*$")) {
 
-                    if (localDebug) {
+                        if (localDebug) {
 
-                        String message = String.format("SCENARIO START FOUND - LINE[%06d]", lineNumber);
-                        System.out.println(message);
-                    }
+                            String message = String.format("SCENARIO START FOUND - LINE[%06d]", lineNumber);
+                            System.out.println(message);
+                        }
 
-                    scenarioStartFound = true;
-                    scenarioStartLine = lineNumber;
+                        scenarioStartFound = true;
+                        scenarioStartLine = lineNumber;
                 }
+
 
             } else {
 
