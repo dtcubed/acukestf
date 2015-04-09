@@ -159,6 +159,29 @@ public class Utilities {
         return true;
     }
     /*****************************************************************************************************************/
+    public static boolean execute_run_feature_file(String runDirectory) throws Throwable
+    {
+        boolean localDebug = true;
+
+        String runFeatureFile      = runDirectory + "run.feature";
+
+        //String cucumberPlugInValue = "json:" + runDirectory + "run-output.json";
+        String cucumberPlugInValue = "junit:" + runDirectory + "run-output.xml";
+
+        if (localDebug) {
+
+            System.out.println("Executing Feature File: [" + runFeatureFile + "]");
+            System.out.println("Cucumber Plugin Value : [" + cucumberPlugInValue + "]");
+
+        }
+
+
+        CucumberCliApiWrapper.executeFeatureFile(runFeatureFile, cucumberPlugInValue);
+
+
+        return true;
+    }
+    /*****************************************************************************************************************/
     public static boolean execute_test_cases(String testSuiteFile, String featureFileBaseDir) throws Throwable
     {
 
@@ -625,3 +648,5 @@ public class Utilities {
     }
     /*****************************************************************************************************************/
 }
+
+
