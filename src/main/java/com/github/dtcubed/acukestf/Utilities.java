@@ -10,12 +10,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 */
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
+import java.util.*;
 
 
 import org.apache.commons.io.FileUtils;
@@ -68,14 +63,50 @@ public class Utilities {
                 System.out.println("] END CUMMULATIVE FF CONTENTS");
             }
 
-            String scenario = extract_scenario(cummulativeFFcontents, "@TEST-CASE-006");
+            /******************** Start going through Suite File here *************/
+            String fileContents = FileUtils.readFileToString(new File(testSuiteFile));
+
+            JSONObject json_object = new JSONObject(fileContents);
+
+            String suiteName        = json_object.getJSONObject("suite").getString("name");
+            boolean suiteProduction = json_object.getJSONObject("suite").getBoolean("production");
+            String suiteVersion     = json_object.getJSONObject("suite").getString("version");
 
             if (localDebug) {
 
-                System.out.println("START EXTRACTED SCENARIO: [");
-                System.out.println(scenario);
-                System.out.println("] END EXTRACTED SCENARIO");
+                System.out.println("Suite Name           : [" + suiteName + "]");
+                System.out.println("Suite Production Flag: [" + Boolean.toString(suiteProduction) + "]");
+                System.out.println("Suite Version        : [" + suiteVersion + "]");
+
             }
+
+            // Now, handle the Test Cases. Loop through them in the order presented in the JSON file.
+            JSONArray testCase = json_object.getJSONArray("cases");
+
+            for(int testCaseIndex = 0; testCaseIndex < testCase.length(); testCaseIndex++) {
+
+                String testCaseName        = testCase.getJSONObject(testCaseIndex).getString("name");
+                // To Extract the scenario, we need the "at sign" added.
+                String testCaseNameWithTag = "@" + testCaseName;
+                int testCaseCount      = testCase.getJSONObject(testCaseIndex).getInt("count");
+
+
+                String [] scenario = extract_scenario(cummulativeFFcontents, testCaseNameWithTag);
+
+                if (localDebug) {
+
+                    System.out.println("START EXTRACTED SCENARIO: [");
+                    for(int lineNumber = 0; lineNumber < scenario.length; lineNumber++) {
+
+                        String myLine = scenario[lineNumber];
+                        System.out.println(myLine);
+                    }
+                    System.out.println("] END EXTRACTED SCENARIO");
+
+                }
+
+            }
+            /******************** End going through Suite File here *************/
 
         } catch (Exception e) {
 
@@ -166,7 +197,7 @@ public class Utilities {
 
     }
     /*****************************************************************************************************************/
-    public static String extract_scenario(String cummulativeFFcontents, String gerkinTag) {
+    public static String[] extract_scenario(String cummulativeFFcontents, String gerkinTag) {
 
         boolean localDebug = true;
 
@@ -186,7 +217,7 @@ public class Utilities {
 
             String myLine = line[lineNumber];
 
-            if (localDebug) {
+            if (localDebug && false) {
 
                 String message = String.format("LINE[%06d]:[%s]", lineNumber, myLine);
                 System.out.println(message);
@@ -223,11 +254,21 @@ public class Utilities {
                     break;
                 }
             }
-
         }
 
+        // TODO: implement logic to scoop up non-empty lines that occur before scenarioStartLine.
+        if (scenarioStartFound && scenarioEndFound) {
 
-        return "not implemented";
+            String [] extractedScenario = Arrays.copyOfRange(line, scenarioStartLine, scenarioEndLine);
+            return extractedScenario;
+
+        } else {
+
+            String message = String.format("SCENARIO NOT EXTRACTED FOR GHERKIN TAG: [%s]", gerkinTag);
+            String [] scenarioNotExtracted = {message};
+            return scenarioNotExtracted;
+        }
+
     }
     /*****************************************************************************************************************/
     public static String get_datetime_string()
