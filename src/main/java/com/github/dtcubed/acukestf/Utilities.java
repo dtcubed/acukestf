@@ -1,6 +1,8 @@
 package com.github.dtcubed.acukestf;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.text.SimpleDateFormat;
@@ -25,6 +27,9 @@ public class Utilities {
     public static boolean build_run_feature_file(String testSuiteFile, String featureFileBaseDir, String runDirectory)
         throws Throwable
     {
+        // NOTE: in the code below, an example from "Mkyong.com" is useful:
+        // http://www.mkyong.com/java/how-to-write-to-file-in-java-bufferedwriter-example/
+
         boolean localDebug = true;
 
         String cummulativeFFcontents = "";
@@ -63,6 +68,34 @@ public class Utilities {
                 System.out.println("] END CUMMULATIVE FF CONTENTS");
             }
 
+            // Prepare to write out a new Run Feature File
+            File fileRunDirectory = new File(runDirectory);
+            File fileRunFeatureFile = new File(runFeatureFile);
+
+            // Ensure that the Run Directory already exists.
+            if (!(fileRunDirectory.isDirectory())) {
+
+                String errorMessage = String.format("Run Directory: [%s] does NOT already exist", runDirectory);
+                throw new Exception(errorMessage);
+
+            }
+
+            // Ensure that the Run Feature File does not already exist.
+            if (fileRunFeatureFile.exists()) {
+
+                String errorMessage = String.format("Run Feature File: [%s] ALREADY exists", runFeatureFile);
+                throw new Exception(errorMessage);
+
+            } else {
+
+                // Create the Run Feature File
+                fileRunFeatureFile.createNewFile();
+            }
+
+
+            FileWriter fw     = new FileWriter(fileRunFeatureFile.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+
             /******************** Start going through Suite File here *************/
             String fileContents = FileUtils.readFileToString(new File(testSuiteFile));
 
@@ -93,19 +126,17 @@ public class Utilities {
 
                 String [] scenario = extract_scenario(cummulativeFFcontents, testCaseNameWithTag);
 
-                if (localDebug) {
 
-                    System.out.println("START EXTRACTED SCENARIO: [");
-                    for(int lineNumber = 0; lineNumber < scenario.length; lineNumber++) {
+                for(int lineNumber = 0; lineNumber < scenario.length; lineNumber++) {
 
-                        String myLine = scenario[lineNumber];
-                        System.out.println(myLine);
-                    }
-                    System.out.println("] END EXTRACTED SCENARIO");
-
+                    String myLine = scenario[lineNumber];
+                    // Write into the Run Feature File
+                    bw.write(myLine);
+                    //System.out.println(myLine);
                 }
 
             }
+            bw.close();
             /******************** End going through Suite File here *************/
 
         } catch (Exception e) {
