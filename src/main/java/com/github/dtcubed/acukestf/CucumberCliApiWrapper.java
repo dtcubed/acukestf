@@ -63,7 +63,8 @@ public class CucumberCliApiWrapper {
     }
     /*****************************************************************************************************************/
     /*****************************************************************************************************************/
-    public static byte executeFeatureFile(String featureFile, String pluginValue) throws Throwable {
+    public static byte executeFeatureFile(String featureFile, String pluginValue, String pluginValueTwo)
+            throws Throwable {
 
         boolean localDebug = false;
 
@@ -104,6 +105,7 @@ public class CucumberCliApiWrapper {
         String cukeArgv[] = {
                 "--glue", glueSwitchValue,
                 "--plugin", pluginValue,
+                "--plugin", pluginValueTwo,
                 "--monochrome",
                 featureFile};
 

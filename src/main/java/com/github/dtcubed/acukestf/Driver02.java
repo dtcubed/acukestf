@@ -75,22 +75,29 @@ public class Driver02 {
 
                     if (Utilities.build_run_feature_file(testSuiteFile, featureFileBaseDir, runDirectory)) {
 
-                        Utilities.execute_run_feature_file(runDirectory);
+                        if (!(Utilities.execute_run_feature_file(runDirectory))) {
+
+                            System.err.println("Problem Executing Run Feature File");
+                            System.exit(1);
+
+                        }
 
                     } else {
 
                         System.err.println("Problem Building Run Feature File");
-
+                        System.exit(1);
                     }
 
                 } else {
 
                     System.err.println("Suite is NOT OK to execute!");
+                    System.exit(1);
                 }
 
             } catch (Throwable e) {
 
                 System.err.println(e.getStackTrace());
+                System.exit(1);
 
             }
 

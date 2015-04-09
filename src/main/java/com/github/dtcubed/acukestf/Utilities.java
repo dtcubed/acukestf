@@ -18,7 +18,6 @@ import java.util.*;
 import org.apache.commons.io.FileUtils;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Utilities {
@@ -163,21 +162,20 @@ public class Utilities {
     {
         boolean localDebug = true;
 
-        String runFeatureFile      = runDirectory + "run.feature";
+        String runFeatureFile         = runDirectory + "run.feature";
 
-        //String cucumberPlugInValue = "json:" + runDirectory + "run-output.json";
-        String cucumberPlugInValue = "junit:" + runDirectory + "run-output.xml";
+        String cucumberPlugInValueOne = "junit:" + runDirectory + "run-output.xml";
+        String cucumberPlugInValueTwo = "json:" + runDirectory + "run-output.json";
 
         if (localDebug) {
 
-            System.out.println("Executing Feature File: [" + runFeatureFile + "]");
-            System.out.println("Cucumber Plugin Value : [" + cucumberPlugInValue + "]");
+            System.out.println("Executing Feature File : [" + runFeatureFile + "]");
+            System.out.println("Cucumber Plugin Value 1: [" + cucumberPlugInValueOne + "]");
+            System.out.println("Cucumber Plugin Value 2: [" + cucumberPlugInValueTwo + "]");
 
         }
 
-
-        CucumberCliApiWrapper.executeFeatureFile(runFeatureFile, cucumberPlugInValue);
-
+        CucumberCliApiWrapper.executeFeatureFile(runFeatureFile, cucumberPlugInValueOne, cucumberPlugInValueTwo);
 
         return true;
     }
