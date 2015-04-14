@@ -1,6 +1,6 @@
 ECHO OFF
 
-SET FILE_TO_INSTALL=target\acukestf-1.2-SNAPSHOT.jar
+SET FILE_TO_INSTALL=target\acukestf-1.3-SNAPSHOT.jar
 
 SET MAVEN_ARTIFACT_ID=acukestf
 
@@ -8,7 +8,7 @@ SET MAVEN_GROUP_ID=com.github.dtcubed.acukestf
 
 SET MAVEN_PACKAGING=jar
 
-SET MAVEN_VERSION=1.2-SNAPSHOT
+SET MAVEN_VERSION=1.3-SNAPSHOT
 
 ECHO "================================================"
 ECHO "Installing Framework Into Local Maven Repository"

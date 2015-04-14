@@ -12,6 +12,14 @@ Feature: Example 5 Feature
   Scenario: Test Case 015
     Given gherkin pass step
 
+  @TEST-CASE-TO-SKIP
+  Scenario: Test Case To Skip
+    Given gherkin pass step
+
+  @TEST-CASE-TO-MULTIPLY-TIMES-FIVE
+  Scenario: Test Case To Multiply By Five
+    Given gherkin pass step
+
 
 
 

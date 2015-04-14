@@ -130,19 +130,29 @@ public class Utilities {
                 String testCaseNameWithTag = "@" + testCaseName;
                 int testCaseCount      = testCase.getJSONObject(testCaseIndex).getInt("count");
 
+                // Continue on to the next Test Case if the "count" is less than or equal to "0".
+                if (testCaseCount <= 0) {
+
+                    continue;
+                }
+
                 String [] scenario = extract_scenario(cummulativeFFcontents, testCaseNameWithTag);
 
-                for(int lineNumber = 0; lineNumber < scenario.length; lineNumber++) {
+                // Write out the desired number of copies of the extracted scenario.
+                for(int repetitionCount = 0; repetitionCount < testCaseCount; repetitionCount++) {
 
-                    String myLine = scenario[lineNumber];
-                    // Write into the Run Feature File
-                    bw.write(myLine);
-                    // Write MSFT "newline";
+                    for (int lineNumber = 0; lineNumber < scenario.length; lineNumber++) {
+
+                        String myLine = scenario[lineNumber];
+                        // Write into the Run Feature File
+                        bw.write(myLine);
+                        // Write MSFT "newline";
+                        bw.write("\r\n");
+                        //System.out.println(myLine);
+                    }
+                    // Write an additional MSFT "newline" after each Scenario.
                     bw.write("\r\n");
-                    //System.out.println(myLine);
                 }
-                // Write an additional MSFT "newline" after each Scenario.
-                bw.write("\r\n");
 
             }
             bw.close();

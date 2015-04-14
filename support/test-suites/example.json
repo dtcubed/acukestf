@@ -65,6 +65,22 @@
     {
       "name":"TEST-CASE-015",
       "count":1
+    },
+    {
+      "name":"TEST-CASE-TO-SKIP",
+      "count":0
+    },
+    {
+      "name":"TEST-CASE-TO-SKIP",
+      "count":-1
+    },
+    {
+      "name":"TEST-CASE-TO-SKIP",
+      "count":-100
+    },
+    {
+      "name":"TEST-CASE-TO-MULTIPLY-TIMES-FIVE",
+      "count":5
     }
   ]
 }
