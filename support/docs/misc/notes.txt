@@ -1,7 +1,55 @@
+NOTES:
+------
 
 01) Given a "feature" file base directory, acukestf will enforce the uniqueness of all tags
-    beginning with "@TEST-CASE-".
+    specified in the "cases" (e.g. Test Cases) area of a Test Suite.
 
 02) Both interactive and batch modes will be options within acukestf.
 
 03) Suite files will use JSON.
+
+04) TODO: Consider implementing a "dynamic.properties" mechanism so that values can be 
+    passed to the testware (especially, since setting environment variables seems less 
+    flexible in Java as opposed to other languages). Maybe,
+    "support/properties/dynamic.properties"?
+
+05) Desirable Characteristics
+    a) Custom almost always the most desirable
+    b) At least three (3) levels of abstraction
+        1) Suite
+        2) Program
+        3) Verification Step
+    c) Three (3) phases implemented for the first two (2) levels of abstraction            
+        1) Setup
+        2) Main
+        3) Cleanup
+    d) All pertinent attributes of a Suite expressible using a markup language
+       (XML, JSON, YAML, etc.)
+    e) Command line interface (CLI) invocation option.
+        1) Typically, a GUI may be developed. However, we want both!
+    f) Timeouts implemented for the Suite and Program levels for all three (3)
+       phases (Setup, Main, Cleanup).
+    g) Parallelism at the Program Level.
+        1) Facilitates load/stress testing.
+        2) Faster Suite execution when it is not necessar for Programs to be
+           sequential.
+    h) Loose coupling between the test framework and the testware
+        1) Empahasizes the generic nature of the framework
+            i) Framework should be useful in most any problem domain.
+            ii) If applicable, proprietary information should be contained in
+            the testware.
+        2) Facilitates releasing the framework and testware independently as
+        separate configuration items.
+    i) Designed such that testware can be implemented in a variety of
+    programming languages.
+    j) Test framework and testware outputs should be immediately inserted into
+    a database with minimal use of intermediate log files.
+        1) Eventually, this will be desired anyway -- so doit from onset.
+    k) Pre-declared versus ad hoc verification steps.
+        1) At the Program Level, there should be support for both pre-declared
+        and ad-hoc verification steps as there are times when both of these
+        models will be useful.
+
+#######################################################################
+############################# EOF #####################################
+#######################################################################
